@@ -43,7 +43,7 @@ class InMemoryParkingLotManagerCommand extends Command implements ParkingLotMana
         $io->block(messages: '[PL] PARKING LOTS ®', style: 'fg=white;bg=blue', padding: true);
 
         $io->block(
-            messages: "Welcome to our parking lot!\nNo stress, just park your vehicle and leave the rest with us 😉",
+            messages: "Welcome to our parking lot!\nNo stress, just park your vehicle and leave the rest with us.",
             style: 'fg=blue;bg=white',
             padding: true
         );

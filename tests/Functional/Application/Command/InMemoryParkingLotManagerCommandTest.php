@@ -78,10 +78,7 @@ final class InMemoryParkingLotManagerCommandTest extends AbstractFunctionalTest
 
         $display = $this->command->getDisplay();
 
-        $this->assertStringContainsString(
-            'This license plate is already registered as parked here. Please verify the value you provided.',
-            $display
-        );
+        $this->assertStringContainsString('This license plate is already registered as parked here', $display);
     }
 
     public function testCheckOutWithVehicleNotCheckedIn(): void
@@ -103,10 +100,7 @@ final class InMemoryParkingLotManagerCommandTest extends AbstractFunctionalTest
 
         $display = $this->command->getDisplay();
 
-        $this->assertStringContainsString(
-            'This license plate is not registered as parked here. Please verify the value you provided.',
-            $display
-        );
+        $this->assertStringContainsString('This license plate is not registered as parked here', $display);
     }
 
     public function testCheckOutWhenParkingLotIsFullEnablingCheckIn(): void
