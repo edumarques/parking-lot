@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Ahc\Env\Retriever;
+
+return [
+    'environment' => Retriever::getEnv('APP_ENV', 'dev'),
+    'enable_in_memory_database' => Retriever::getEnv('ENABLE_IN_MEMORY_DATABASE', true, FILTER_VALIDATE_BOOLEAN),
+    'database_url' => Retriever::getEnv('DATABASE_URL', ''),
+    'entity_paths' => [__DIR__ . '/../src/Domain/Entity'],
+    'spots_amount' => Retriever::getEnv('SPOTS_AMOUNT', 0, FILTER_VALIDATE_INT, []),
+];
+

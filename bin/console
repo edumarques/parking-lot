@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../config/bootstrap';
+
+use App\Application\Command\ParkingLotManagerCommandInterface;
+use App\Infrastructure\Database\DatabaseLoaderInterface;
+use App\Infrastructure\Database\InMemoryDatabaseLoader;
+use Symfony\Component\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+$application = new Application();
+
+/** @var ContainerBuilder $container */
+/** @var InMemoryDatabaseLoader $inMemoryDatabaseLoader */
+$inMemoryDatabaseLoader = $container->get(DatabaseLoaderInterface::class);
+$inMemoryDatabaseLoader->load();
+
+$application->add($container->get(ParkingLotManagerCommandInterface::class));
+
+$application->run();

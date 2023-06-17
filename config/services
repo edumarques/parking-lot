@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Ahc\Env\Retriever;
+use App\Application\Command\InMemoryParkingLotManagerCommand;
+use App\Application\Command\ParkingLotManagerCommandInterface;
+use App\Application\Service\ParkingLotAvailabilityService;
+use App\Application\Service\ParkingLotAvailabilityServiceInterface;
+use App\Application\Service\ParkingLotManagerService;
+use App\Application\Service\ParkingLotManagerServiceInterface;
+use App\Application\Validator\AvailabilityValidator;
+use App\Application\Validator\CheckInValidator;
+use App\Application\Validator\CheckOutValidator;
+use App\Domain\Entity\Spot;
+use App\Domain\Entity\Vehicle;
+use App\Domain\Repository\SpotRepository;
+use App\Domain\Repository\SpotRepositoryInterface;
+use App\Domain\Repository\VehicleRepository;
+use App\Domain\Repository\VehicleRepositoryInterface;
+use App\Infrastructure\Database\DatabaseLoaderInterface;
+use App\Infrastructure\Database\InMemoryDatabaseLoader;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\ORMSetup;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+
+return [
+    ORMSetup::class => (new Definition(ORMSetup::class))
+        ->setFactory([ORMSetup::class, 'createAttributeMetadataConfiguration'])
+        ->addArgument('%entity_paths%')
+        ->addArgument(Retriever::getEnv('APP_ENV', 'dev') === 'dev'),
+
+    Connection::class => (new Definition(Connection::class))
+        ->setFactory([DriverManager::class, 'getConnection'])
+        ->addArgument(['url' => '%database_url%'])
+        ->addArgument(new Reference(ORMSetup::class)),
+
+    EntityManagerInterface::class => (new Definition(EntityManager::class))
+        ->addArgument(new Reference(Connection::class))
+        ->addArgument(new Reference(ORMSetup::class)),
+
+    VehicleRepositoryInterface::class => (new Definition(VehicleRepository::class))
+        ->addArgument(new Reference(EntityManagerInterface::class))
+        ->addArgument(new ClassMetadata(Vehicle::class)),
+
+    SpotRepositoryInterface::class => (new Definition(SpotRepository::class))
+        ->addArgument(new Reference(EntityManagerInterface::class))
+        ->addArgument(new ClassMetadata(Spot::class)),
+
+    DatabaseLoaderInterface::class => (new Definition(InMemoryDatabaseLoader::class))
+        ->setFactory([InMemoryDatabaseLoader::class, 'create'])
+        ->addArgument(new Reference(EntityManagerInterface::class))
+        ->addArgument(['memoryDatabaseConnection' => '%enable_in_memory_database%', 'spotsAmount' => '%spots_amount%']),
+
+    ParkingLotAvailabilityServiceInterface::class => (new Definition(ParkingLotAvailabilityService::class))
+        ->addArgument(new Reference(SpotRepositoryInterface::class)),
+
+    AvailabilityValidator::class => (new Definition(AvailabilityValidator::class))
+        ->addArgument(new Reference(ParkingLotAvailabilityServiceInterface::class)),
+
+    CheckInValidator::class => (new Definition(CheckInValidator::class))
+        ->addArgument(new Reference(VehicleRepositoryInterface::class)),
+
+    CheckOutValidator::class => (new Definition(CheckOutValidator::class))
+        ->addArgument(new Reference(VehicleRepositoryInterface::class)),
+
+    ParkingLotManagerServiceInterface::class => (new Definition(ParkingLotManagerService::class))
+        ->addArgument(new Reference(SpotRepositoryInterface::class))
+        ->addArgument(new Reference(VehicleRepositoryInterface::class)),
+
+    ParkingLotManagerCommandInterface::class => (new Definition(InMemoryParkingLotManagerCommand::class))
+        ->addArgument(new Reference(ParkingLotAvailabilityServiceInterface::class))
+        ->addArgument(new Reference(ParkingLotManagerServiceInterface::class))
+        ->addArgument(new Reference(AvailabilityValidator::class))
+        ->addArgument(new Reference(CheckInValidator::class))
+        ->addArgument(new Reference(CheckOutValidator::class)),
+];
+
