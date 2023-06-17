@@ -31,6 +31,24 @@ docker-compose build --pull --no-cache
 docker-compose up --detach
 ```
 
+## Basic usage
+
+To run the manager, just execute one of the following commands:
+
+```sh
+make parking-lot-manager
+```
+
+or
+
+```sh
+docker-compose exec app bin/console parking-lot:manager
+```
+
+## Demo
+
+![Demo](./doc/demo.gif)
+
 ## Useful tips
 
 #### List of available commands using *Make*:
