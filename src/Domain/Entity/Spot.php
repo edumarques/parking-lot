@@ -15,27 +15,23 @@ class Spot implements SpotInterface, VehicleAwareInterface, VehicleOccupationAwa
 
     #[ORM\OneToOne(inversedBy: 'occupyingSpot', targetEntity: Vehicle::class, cascade: ['all'])]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
-    protected ?Vehicle $occupyingVehicle = null;
+    protected ?VehicleInterface $occupyingVehicle = null;
+
+    public function isAvailable(): bool
+    {
+        return null === $this->occupyingVehicle;
+    }
 
     public function getVehicle(): ?VehicleInterface
     {
         return $this->occupyingVehicle;
     }
 
-    public function setVehicle(?VehicleInterface $vehicle): static
+    public function setOccupyingVehicle(?VehicleInterface $vehicle): static
     {
         $this->occupyingVehicle = $vehicle;
 
-        if ($vehicle instanceof SpotOccupationAwareInterface) {
-            $vehicle->occupySpot($this);
-        }
-
         return $this;
-    }
-
-    public function isAvailable(): bool
-    {
-        return null === $this->occupyingVehicle;
     }
 
     public function hasOccupyingVehicle(): bool

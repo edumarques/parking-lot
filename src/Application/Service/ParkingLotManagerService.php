@@ -29,12 +29,15 @@ readonly class ParkingLotManagerService implements ParkingLotManagerServiceInter
         $this->checkValidation($data);
 
         $licensePlate = $data->getLicensePlate();
+
+        /** @var Vehicle|null $vehicle */
         $vehicle = $this->vehicleRepository->findOneBy(['licensePlate' => $licensePlate]);
         $vehicle ??= new Vehicle($licensePlate);
 
         /** @var Spot $spot */
         $spot = $this->spotRepository->findOneBy(['occupyingVehicle' => null]);
-        $spot->setVehicle($vehicle);
+
+        $vehicle->occupySpot($spot);
 
         $this->spotRepository->save($spot);
     }

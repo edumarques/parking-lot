@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
 final class ServiceContainer
 {
@@ -48,11 +49,17 @@ final class ServiceContainer
         self::$container->setDefinitions(self::getServiceDefinitions());
     }
 
+    /**
+     * @return mixed[]
+     */
     private static function getParameterDefinitions(): array
     {
         return require_once __DIR__ . '/../../../config/parameters';
     }
 
+    /**
+     * @return array<class-string, Definition>
+     */
     private static function getServiceDefinitions(): array
     {
         return require_once __DIR__ . '/../../../config/services';

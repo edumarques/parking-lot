@@ -11,7 +11,7 @@ interface DatabaseLoaderInterface
     /**
      * @param mixed[] $options
      */
-    public static function create(EntityManagerInterface $entityManager, array $options = []): static;
+    public static function create(EntityManagerInterface $entityManager, array $options = []): self;
 
     public function load(): void;
 }

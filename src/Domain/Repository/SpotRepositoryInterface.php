@@ -17,10 +17,4 @@ use App\Domain\Entity\SpotInterface;
  */
 interface SpotRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * @return SpotInterface[]
-     */
-    public function findAllAvailable(): array;
-
-    public function countAvailable(): int;
 }

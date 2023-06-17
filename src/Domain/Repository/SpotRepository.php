@@ -15,19 +15,10 @@ use App\Domain\Entity\Spot;
  * @method void save(Spot $object)
  * @method void delete(Spot $object)
  */
-final class SpotRepository extends AbstractRepository implements SpotRepositoryInterface
+final class SpotRepository extends AbstractRepository implements
+    SpotRepositoryInterface,
+    AvailabilityAwareRepositoryInterface
 {
-    /**
-     * @return Spot[]
-     */
-    public function findAllAvailable(): array
-    {
-        return $this->createQueryBuilder('spot')
-            ->where('spot.occupyingVehicle IS NULL')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function countAvailable(): int
     {
         return $this->count(['occupyingVehicle' => null]);

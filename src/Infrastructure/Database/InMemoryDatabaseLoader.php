@@ -15,7 +15,7 @@ readonly class InMemoryDatabaseLoader extends AbstractDatabaseLoader
     /**
      * @inheritDoc
      */
-    public static function create(EntityManagerInterface $entityManager, array $options = []): static
+    public static function create(EntityManagerInterface $entityManager, array $options = []): self
     {
         $memoryDatabaseConnection = $options['memoryDatabaseConnection'] ?? false;
 
@@ -31,7 +31,7 @@ readonly class InMemoryDatabaseLoader extends AbstractDatabaseLoader
             throw new InvalidSpotsAmountException('The amount of spots must not be negative');
         }
 
-        return new static($entityManager, $spotsAmount);
+        return new self($entityManager, $spotsAmount);
     }
 
     public function load(): void
@@ -42,6 +42,14 @@ readonly class InMemoryDatabaseLoader extends AbstractDatabaseLoader
         $schemaTool->updateSchema($metaData);
 
         $this->seed();
+    }
+
+    public function drop(): void
+    {
+        $metaData = $this->entityManager->getMetadataFactory()->getAllMetadata();
+
+        $schemaTool = new SchemaTool($this->entityManager);
+        $schemaTool->dropSchema($metaData);
     }
 
     protected function seed(): void

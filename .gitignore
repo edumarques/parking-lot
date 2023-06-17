@@ -1,15 +1,20 @@
 # Composer
 /vendor
 
-# CSFixer
-/.php-cs-fixer.cache
+# PHPCS
+/phpcs.xml
+/.phpcs-cache
+
+# PHPStan
+/phpstan.neon
 
 # PHPUnit
 /.phpunit.result.cache
-/coverage.xml
+/coverage
 
 # JetBrains
 .idea
 
 # App
 /.env
+/.env.test

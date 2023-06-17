@@ -18,7 +18,7 @@ class Vehicle implements VehicleInterface, SpotAwareInterface, SpotOccupationAwa
     protected string $licensePlate;
 
     #[ORM\OneToOne(mappedBy: 'occupyingVehicle', targetEntity: Spot::class, cascade: ['all'])]
-    protected ?Spot $occupyingSpot = null;
+    protected ?SpotInterface $occupyingSpot = null;
 
     public function __construct(string $licensePlate)
     {
@@ -30,7 +30,7 @@ class Vehicle implements VehicleInterface, SpotAwareInterface, SpotOccupationAwa
         return $this->licensePlate;
     }
 
-    public function getSpot(): ?Spot
+    public function getSpot(): ?SpotInterface
     {
         return $this->occupyingSpot;
     }
@@ -39,13 +39,17 @@ class Vehicle implements VehicleInterface, SpotAwareInterface, SpotOccupationAwa
     {
         $this->occupyingSpot = $spot;
 
+        if ($this->occupyingSpot instanceof VehicleOccupationAwareInterface) {
+            $this->occupyingSpot->setOccupyingVehicle($this);
+        }
+
         return $this;
     }
 
     public function vacateSpot(): static
     {
-        if ($this->occupyingSpot instanceof VehicleAwareInterface) {
-            $this->occupyingSpot->setVehicle(null);
+        if ($this->occupyingSpot instanceof VehicleOccupationAwareInterface) {
+            $this->occupyingSpot->setOccupyingVehicle(null);
         }
 
         $this->occupyingSpot = null;

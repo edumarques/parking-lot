@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Ahc\Env\Loader;
+
+$envLoader = new Loader();
+$envLoader->load(__DIR__ . '/../.env.test', true, Loader::ALL);

@@ -63,10 +63,13 @@ phpstan: ## Run PHPStan
 lint: phpcs phpstan ## Run PHP Code Sniffer and PHPStan
 
 test: ## Run tests, pass the parameter "args=" to run the command with arguments or options
-	@$(PHP) bin/phpunit $(args)
+	@$(PHP) vendor/bin/phpunit $(args)
+
+test-pretty: ## Run tests in a pretty way, pass the parameter "args=" to run the command with arguments or options
+	@$(PHP) vendor/bin/phpunit --printer 'Sempro\PHPUnitPrettyPrinter\PrettyPrinterForPhpUnit9' $(args)
 
 test-cov: ## Run tests and generate coverage report
-	@$(DOCKER_COMP) exec -e XDEBUG_MODE=coverage php bin/phpunit --coverage-clover coverage/clover/clover.xml --coverage-html coverage/html
+	@$(DOCKER_COMP) exec -e XDEBUG_MODE=coverage app vendor/bin/phpunit --coverage-clover coverage/clover/clover.xml --coverage-html coverage/html
 
 ## 🧙 Composer
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
@@ -77,16 +80,3 @@ composer: ## Run composer, pass the parameter "c=" to run a given command, examp
 console: ## List all application commands or pass the parameter "c=" to run a given command, example: make command c=about
 	@$(eval c ?=)
 	@$(APP) $(c)
-
-migrations-console: ## Run migrations console
-	@$(eval c ?=)
-	@$(PHP_CONT) ./vendor/bin/doctrine-migrations $(c)
-
-migrations-status: c=migrations:status ## See migrations status
-migrations-status: migrations-console
-
-migrations-diff: c=migrations:diff ## Generate diff of migrations based on entities
-migrations-diff: migrations-console
-
-migrations-migrate: c=migrations:migrate ## Run migrations
-migrations-migrate: migrations-console

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Command;
 
 use App\Application\Enum\ParkingLotActionEnum;
+use App\Application\Exception\ValidationException;
 use App\Application\Service\ParkingLotAvailabilityServiceInterface;
 use App\Application\Service\ParkingLotManagerServiceInterface;
 use App\Application\Validator\AvailabilityValidator;
@@ -56,15 +57,16 @@ class InMemoryParkingLotManagerCommand extends Command implements ParkingLotMana
             match ($action) {
                 ParkingLotActionEnum::CHECK_IN->value => $this->handleCheckIn($io),
                 ParkingLotActionEnum::CHECK_OUT->value => $this->handleCheckout($io),
+                default => throw new \LogicException('An action must be selected'),
             };
-        } catch (\Throwable $throwable) {
-            $io->block(messages: $throwable->getMessage(), style: 'fg=white;bg=red', padding: true);
+        } catch (ValidationException $exception) {
+            $io->block(messages: $exception->getMessage(), style: 'fg=white;bg=red', padding: true);
         }
 
         $keepRunning = $io->confirm('Keep running manager?');
 
         if ($keepRunning) {
-            $this->execute(new ArgvInput(), new ConsoleOutput());
+            $this->execute($input, $output);
         }
 
         return Command::SUCCESS;
