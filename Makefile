@@ -13,11 +13,11 @@ APP  = $(PHP_CONT) bin/console
 .DEFAULT_GOAL = help
 .PHONY        = help build up start down logs sh composer vendor sf cc
 
-## 👷 Makefile
+## --- Makefile ---
 help: ## Outputs this help screen
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
-## 🐳 Docker
+## --- Docker ---
 build: ## Builds container(s)
 	@$(DOCKER_COMP) build --pull --no-cache $(c)
 
@@ -50,7 +50,7 @@ sh: ## Connect to a container via SH
 php-sh: ## Connect to the PHP FPM container via SH
 	@$(PHP_CONT) sh
 
-## ✅ Code Quality
+## --- Code Quality ---
 phpcs: ## Run PHP Code Sniffer
 	@$(PHP_CONT) ./vendor/bin/phpcs
 
@@ -71,12 +71,15 @@ test-pretty: ## Run tests in a pretty way, pass the parameter "args=" to run the
 test-cov: ## Run tests and generate coverage report
 	@$(DOCKER_COMP) exec -e XDEBUG_MODE=coverage app vendor/bin/phpunit --coverage-clover coverage/clover/clover.xml --coverage-html coverage/html
 
-## 🧙 Composer
+## --- Composer ---
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
 	@$(COMPOSER) $(c)
 
-## App
+## --- App ---
 console: ## List all application commands or pass the parameter "c=" to run a given command, example: make command c=about
 	@$(eval c ?=)
 	@$(APP) $(c)
+
+parking-lot-manager: c=parking-lot:manager ## Run the Parking Lot Manager
+parking-lot-manager: console
